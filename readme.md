@@ -1,9 +1,4 @@
-Got it — you want to build an **epsilon-greedy live server in Elixir** that automatically experiments with and selects the best-performing **title + thumbnail combination**, but you also want to pace yourself with **2-hour daily sessions**. The trick is to break the project into clear, bite-sized milestones where each session moves you forward without being overwhelming.
-
-Here’s a suggested breakdown:
-
----
-
+# Agenda
 ## **Phase 1: Foundations (Environment + Scaffolding)**
 
 **Goal:** Have a minimal, working Elixir service skeleton.
