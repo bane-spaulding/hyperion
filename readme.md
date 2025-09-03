@@ -8,7 +8,7 @@ Here’s a suggested breakdown:
 
 **Goal:** Have a minimal, working Elixir service skeleton.
 
-* **Day 1–2 (2–4 hrs total):**
+* **✅ Day 1–2 (2–4 hrs total):**
 
   * Install and set up Elixir project (`mix new epsilon_server`).
   * Decide if you’ll use **Phoenix** (for a web server) or **Plug + Cowboy** (lighter).

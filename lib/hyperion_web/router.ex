@@ -18,12 +18,8 @@ defmodule HyperionWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/ping", PingController, :index
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", HyperionWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:hyperion, :dev_routes) do
