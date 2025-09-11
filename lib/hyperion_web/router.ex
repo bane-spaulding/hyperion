@@ -18,7 +18,8 @@ defmodule HyperionWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/ping", PingController, :index
+    get "/ping", PingController, :ping
+    resources "/experiments", ExperimentController
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

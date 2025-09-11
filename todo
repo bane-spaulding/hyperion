@@ -1,0 +1,11 @@
+- create lever to check video views "live"
+  -> persist snapshots every minute into database
+
+- create lever to upload new videos to database
+  - doesn't set the image on  video, just uploads and links it
+
+- make centralized Agent to count quote limits
+  -> take into account cost of uploading the image
+  -> getting views every 30s
+
+- create lever to set the image with existing image from database
