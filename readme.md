@@ -17,15 +17,15 @@
 
 * **Day 3–4:**
 
-  * Define schema (e.g., `experiment_id`, `title`, `thumbnail`, `views`, `clicks`).
-  * Pick persistence option:
+  * ✅ Define schema (e.g., `experiment_id`, `title`, `thumbnail`, `views`, `clicks`).
+  * ✅ Pick persistence option:
 
     * **Lightweight:** ETS/Mnesia (good for fast prototyping, in-memory).
     * **Persistent:** Postgres (via Ecto).
   * Implement functions to:
 
     * Add a new candidate (title + thumbnail).
-    * Record impressions & clicks.
+    * ✅ Record impressions & clicks.
 
 ---
 
