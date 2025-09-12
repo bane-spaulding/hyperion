@@ -27,14 +27,16 @@ defmodule Hyperion.TokenRefresher do
     # Load environment variables from .env file if present
     load_env_file()
 
-   case  getInitToken() do
+    case getInitToken() do
       {:ok, token} ->
         Logger.debug("Obtained refresh_token: #{inspect(token)}")
         Kernel.send(self(), :refresh)
         Process.send_after(self(), :refresh, @refresh_interval)
         {:ok, token}
-      {:stop, error} -> {:stop, error}
-   end
+
+      {:stop, error} ->
+        {:stop, error}
+    end
   end
 
   @impl true
@@ -67,12 +69,15 @@ defmodule Hyperion.TokenRefresher do
         case System.get_env(@env_token) do
           nil ->
             {:stop, "Set REFRESH_TOKEN env var, no token provided."}
+
           token ->
             Logger.debug("Successfully retrieved token from env. #{inspect(token)}")
+
             %Secret{}
-              |> Secret.changeset(%{refresh_token: token})
-              |> Repo.insert()
+            |> Secret.changeset(%{refresh_token: token})
+            |> Repo.insert()
         end
+
       token ->
         Logger.debug("Successfully retrieved token from db. #{inspect(token)}")
         {:ok, token}
@@ -107,6 +112,7 @@ defmodule Hyperion.TokenRefresher do
               # Remove quotes if present
               value = String.trim(value, "\"")
               System.put_env(key, value)
+
             _ ->
               :ignore
           end
@@ -118,13 +124,15 @@ defmodule Hyperion.TokenRefresher do
   defp get_oauth_config do
     client_id = System.get_env(@env_client_id)
     client_secret = System.get_env(@env_client_secret)
+
     if is_nil(client_secret) || is_nil(client_secret) do
       {:error, "Both #{@env_client_id}, #{@env_client_secret} env var are required"}
     else
-      {:ok, %{
-        client_id: client_id,
-        client_secret: client_secret
-      }}
+      {:ok,
+       %{
+         client_id: client_id,
+         client_secret: client_secret
+       }}
     end
   end
 
@@ -140,17 +148,19 @@ defmodule Hyperion.TokenRefresher do
 
     case Req.post(@token_endpoint, form: body) do
       {:ok, %{status: 200, body: response}} ->
-        {:ok, %{
-          access_token: response["access_token"],
-        }}
+        {:ok,
+         %{
+           access_token: response["access_token"]
+         }}
 
       {:ok, %{status: 400, body: %{"error" => "invalid_grant"}}} ->
-        {:error, """
-        Invalid refresh token. This can happen if:
-        1. The refresh token has been revoked
-        2. The OAuth2 app credentials have changed
-        3. The token is corrupted
-        """}
+        {:error,
+         """
+         Invalid refresh token. This can happen if:
+         1. The refresh token has been revoked
+         2. The OAuth2 app credentials have changed
+         3. The token is corrupted
+         """}
 
       {:ok, %{status: status, body: body}} ->
         {:error, "Token refresh failed (#{status}): #{inspect(body)}"}
@@ -164,11 +174,11 @@ defmodule Hyperion.TokenRefresher do
     case Repo.get(Secret, 1) do
       nil ->
         {:stop, "No existing access_token found, impossible condition, halting system."}
+
       secret ->
         secret
-          |> Secret.changeset(access_token)
-          |> Repo.update()
+        |> Secret.changeset(access_token)
+        |> Repo.update()
     end
   end
 end
-

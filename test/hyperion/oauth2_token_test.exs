@@ -21,7 +21,12 @@ defmodule Hyperion.Oauth2TokenTest do
     end
 
     test "create_secrets/1 with valid data creates a secrets" do
-      valid_attrs = %{scope: "some scope", access_token: "some access_token", expires_in: 42, token_type: "some token_type"}
+      valid_attrs = %{
+        scope: "some scope",
+        access_token: "some access_token",
+        expires_in: 42,
+        token_type: "some token_type"
+      }
 
       assert {:ok, %Secrets{} = secrets} = Oauth2Token.create_secrets(valid_attrs)
       assert secrets.scope == "some scope"
@@ -36,7 +41,13 @@ defmodule Hyperion.Oauth2TokenTest do
 
     test "update_secrets/2 with valid data updates the secrets" do
       secrets = secrets_fixture()
-      update_attrs = %{scope: "some updated scope", access_token: "some updated access_token", expires_in: 43, token_type: "some updated token_type"}
+
+      update_attrs = %{
+        scope: "some updated scope",
+        access_token: "some updated access_token",
+        expires_in: 43,
+        token_type: "some updated token_type"
+      }
 
       assert {:ok, %Secrets{} = secrets} = Oauth2Token.update_secrets(secrets, update_attrs)
       assert secrets.scope == "some updated scope"
@@ -94,7 +105,11 @@ defmodule Hyperion.Oauth2TokenTest do
 
     test "update_secret/2 with valid data updates the secret" do
       secret = secret_fixture()
-      update_attrs = %{refresh_token: "some updated refresh_token", access_token: "some updated access_token"}
+
+      update_attrs = %{
+        refresh_token: "some updated refresh_token",
+        access_token: "some updated access_token"
+      }
 
       assert {:ok, %Secret{} = secret} = Oauth2Token.update_secret(secret, update_attrs)
       assert secret.refresh_token == "some updated refresh_token"

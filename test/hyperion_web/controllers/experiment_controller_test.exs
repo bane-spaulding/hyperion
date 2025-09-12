@@ -3,8 +3,20 @@ defmodule HyperionWeb.ExperimentControllerTest do
 
   import Hyperion.ExperimentsFixtures
 
-  @create_attrs %{title: "some title", thumbnail: "some thumbnail", views: 42, clicks: 42, user_id: 42}
-  @update_attrs %{title: "some updated title", thumbnail: "some updated thumbnail", views: 43, clicks: 43, user_id: 43}
+  @create_attrs %{
+    title: "some title",
+    thumbnail: "some thumbnail",
+    views: 42,
+    clicks: 42,
+    user_id: 42
+  }
+  @update_attrs %{
+    title: "some updated title",
+    thumbnail: "some updated thumbnail",
+    views: 43,
+    clicks: 43,
+    user_id: 43
+  }
   @invalid_attrs %{title: nil, thumbnail: nil, views: nil, clicks: nil, user_id: nil}
 
   describe "index" do

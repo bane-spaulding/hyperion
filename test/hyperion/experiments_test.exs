@@ -21,7 +21,13 @@ defmodule Hyperion.ExperimentsTest do
     end
 
     test "create_experiment/1 with valid data creates a experiment" do
-      valid_attrs = %{title: "some title", thumbnail: "some thumbnail", views: 42, clicks: 42, user_id: 42}
+      valid_attrs = %{
+        title: "some title",
+        thumbnail: "some thumbnail",
+        views: 42,
+        clicks: 42,
+        user_id: 42
+      }
 
       assert {:ok, %Experiment{} = experiment} = Experiments.create_experiment(valid_attrs)
       assert experiment.title == "some title"
@@ -37,9 +43,18 @@ defmodule Hyperion.ExperimentsTest do
 
     test "update_experiment/2 with valid data updates the experiment" do
       experiment = experiment_fixture()
-      update_attrs = %{title: "some updated title", thumbnail: "some updated thumbnail", views: 43, clicks: 43, user_id: 43}
 
-      assert {:ok, %Experiment{} = experiment} = Experiments.update_experiment(experiment, update_attrs)
+      update_attrs = %{
+        title: "some updated title",
+        thumbnail: "some updated thumbnail",
+        views: 43,
+        clicks: 43,
+        user_id: 43
+      }
+
+      assert {:ok, %Experiment{} = experiment} =
+               Experiments.update_experiment(experiment, update_attrs)
+
       assert experiment.title == "some updated title"
       assert experiment.thumbnail == "some updated thumbnail"
       assert experiment.views == 43
@@ -49,7 +64,10 @@ defmodule Hyperion.ExperimentsTest do
 
     test "update_experiment/2 with invalid data returns error changeset" do
       experiment = experiment_fixture()
-      assert {:error, %Ecto.Changeset{}} = Experiments.update_experiment(experiment, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Experiments.update_experiment(experiment, @invalid_attrs)
+
       assert experiment == Experiments.get_experiment!(experiment.id)
     end
 

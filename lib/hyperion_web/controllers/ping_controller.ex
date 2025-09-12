@@ -5,4 +5,3 @@ defmodule HyperionWeb.PingController do
     render(conn, :ping)
   end
 end
-

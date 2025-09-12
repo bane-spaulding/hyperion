@@ -18,7 +18,25 @@ defmodule Hyperion.Repo.Video do
   @doc false
   def changeset(video, attrs) do
     video
-    |> cast(attrs, [:etag, :video_id, :kind, :view_count, :like_count, :dislike_count, :favorite_count, :comment_count])
-    |> validate_required([:etag, :video_id, :kind, :view_count, :like_count, :dislike_count, :favorite_count, :comment_count])
+    |> cast(attrs, [
+      :etag,
+      :video_id,
+      :kind,
+      :view_count,
+      :like_count,
+      :dislike_count,
+      :favorite_count,
+      :comment_count
+    ])
+    |> validate_required([
+      :etag,
+      :video_id,
+      :kind,
+      :view_count,
+      :like_count,
+      :dislike_count,
+      :favorite_count,
+      :comment_count
+    ])
   end
 end
