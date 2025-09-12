@@ -1,6 +1,3 @@
-- create lever to check video views "live"
-  -> distribute 1m data from live feed via channels
-
 - create lever to upload new title/thumbnails to database
   - doesn't set the image on video, just uploads and links it
 

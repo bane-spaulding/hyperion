@@ -8,7 +8,8 @@ defmodule Hyperion.ViewTracker do
   alias Hyperion.Repo.{Secret, Video}
 
   @api_url "https://youtube.googleapis.com/youtube/v3/videos"
-  @request_interval :timer.minutes(1)
+  @request_interval :timer.seconds(15)
+  # @request_interval :timer.minutes(1)
   @topic "views_1m"
 
   # Client-facing API functions
