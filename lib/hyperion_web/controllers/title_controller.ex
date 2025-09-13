@@ -1,8 +1,8 @@
 defmodule HyperionWeb.TitleController do
   use HyperionWeb, :controller
 
-  alias Hyperion.Titles
   alias Hyperion.Repo.Title
+  alias Hyperion.Videos.Titles
 
   def index(conn, _params) do
     titles = Titles.list_titles()

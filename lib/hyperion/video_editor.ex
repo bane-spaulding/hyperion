@@ -5,7 +5,7 @@ defmodule Hyperion.VideoEditor do
 
   alias Hyperion.Repo
   alias Hyperion.Repo.Secret
-  alias Hyperion.Titles
+  alias Hyperion.Videos.Titles
 
   @api_title_url "https://www.googleapis.com/youtube/v3/videos"
   @title_max_length 100

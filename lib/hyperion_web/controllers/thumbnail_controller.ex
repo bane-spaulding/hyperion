@@ -1,7 +1,7 @@
 defmodule HyperionWeb.ThumbnailController do
   use HyperionWeb, :controller
 
-  alias Hyperion.Thumbnails
+  alias Hyperion.Videos.Thumbnails
 
   def index(conn, _params) do
     thumbnails = Thumbnails.list_thumbnails()
