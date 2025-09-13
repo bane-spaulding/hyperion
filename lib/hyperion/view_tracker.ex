@@ -60,7 +60,6 @@ defmodule Hyperion.ViewTracker do
               Task.start(fn -> save_videos(videos) end)
               Phoenix.PubSub.broadcast(Hyperion.PubSub, @topic, {:videos, videos})
 
-
               Process.send_after(self(), :request, @request_interval)
               {:noreply, %{state | videos: videos}}
 

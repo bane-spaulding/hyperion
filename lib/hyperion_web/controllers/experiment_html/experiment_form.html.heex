@@ -1,0 +1,11 @@
+<.form :let={f} for={@changeset} action={@action}>
+  <.input field={f[:title]} type="text" label="Title" />
+  <.input field={f[:thumbnail]} type="text" label="Thumbnail" />
+  <.input field={f[:views]} type="number" label="Views" />
+  <.input field={f[:clicks]} type="number" label="Clicks" />
+  <.input field={f[:user_id]} type="number" label="User" />
+  <footer>
+    <.button variant="primary">Save Experiment</.button>
+    <.button :if={@return_to} href={@return_to}>Cancel</.button>
+  </footer>
+</.form>

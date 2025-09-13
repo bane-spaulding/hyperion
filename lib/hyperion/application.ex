@@ -17,7 +17,7 @@ defmodule Hyperion.Application do
       # Start a worker by calling: Hyperion.Worker.start_link(arg)
       # {Hyperion.Worker, arg},
       # Start to serve requests, typically the last entry
-      HyperionWeb.Endpoint,
+      HyperionWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

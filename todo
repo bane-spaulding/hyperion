@@ -1,6 +1,3 @@
-- create lever to upload new title/thumbnails to database
-  - doesn't set the image on video, just uploads and links it
-
 - create lever to set the image with existing image from database
 
 - make centralized Agent to count quote limits

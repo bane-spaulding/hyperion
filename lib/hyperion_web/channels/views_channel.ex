@@ -4,7 +4,7 @@ defmodule HyperionWeb.ViewsChannel do
   @topic "views_1m"
 
   def join(@topic, _message, socket) do
-        :ok = Phoenix.PubSub.subscribe(Hyperion.PubSub, @topic)
+    :ok = Phoenix.PubSub.subscribe(Hyperion.PubSub, @topic)
     {:ok, socket}
   end
 
