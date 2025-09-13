@@ -2,7 +2,7 @@ defmodule HyperionWeb.ExperimentController do
   use HyperionWeb, :controller
 
   alias Hyperion.Experiments
-  alias Hyperion.Experiments.Repo.Experiment
+  alias Hyperion.Repo.Experiment
 
   def index(conn, _params) do
     experiments = Experiments.list_experiments()

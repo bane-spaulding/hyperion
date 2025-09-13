@@ -1,5 +1,4 @@
 defmodule Hyperion.Thumbnails do
-
   import Ecto.Query, warn: false
   alias Hyperion.Repo
   alias Hyperion.Repo.Thumbnail

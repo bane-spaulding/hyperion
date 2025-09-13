@@ -1,5 +1,9 @@
 - create lever to set the image with existing image from database
 
+- create lever to set the title from database
+
+
+
 - make centralized Agent to count quote limits
   -> take into account cost of uploading the image
   -> getting views every 30s

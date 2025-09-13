@@ -84,11 +84,21 @@ defmodule Hyperion.TokenRefresher do
     end
   end
 
-  defp refresh_tokens(%Secret{refresh_token: refresh_token}) do
+  defp refresh_tokens(%Secret{refresh_token: refresh_token}=current_token) do
     with {:ok, config} <- get_oauth_config(),
-         {:ok, access_token} <- refresh_token(refresh_token, config),
-         {:ok, new_token} <- persist_access_token(access_token) do
-      {:ok, new_token}
+         {:ok, access_token} <- refresh_token(refresh_token, config) do
+      case persist_access_token(current_token, access_token) do
+        {:ok, new_token} ->
+          {:ok, new_token}
+
+        {:stop, reason} ->
+          {:error, reason}
+      end
+    else
+      {:error, reason} ->
+        {:error, reason}
+      {:stop, reason} ->
+        {:error, reason}
     end
   end
 
@@ -170,15 +180,9 @@ defmodule Hyperion.TokenRefresher do
     end
   end
 
-  defp persist_access_token(access_token) do
-    case Repo.get(Secret, 1) do
-      nil ->
-        {:stop, "No existing access_token found, impossible condition, halting system."}
-
-      secret ->
-        secret
-        |> Secret.changeset(access_token)
-        |> Repo.update()
-    end
+  defp persist_access_token(secret, access_token) do
+    secret
+    |> Secret.changeset(access_token)
+    |> Repo.update()
   end
 end

@@ -5,8 +5,7 @@ defmodule Hyperion.Experiments do
 
   import Ecto.Query, warn: false
   alias Hyperion.Repo
-
-  alias Hyperion.Experiments.Repo.Experiment
+  alias Hyperion.Repo.Experiment
 
   @doc """
   Returns the list of experiments.
