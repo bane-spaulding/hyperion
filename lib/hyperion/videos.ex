@@ -2,11 +2,19 @@ import Ecto.Query, warn: false
 alias Hyperion.Repo
 
 defmodule Hyperion.Videos do
+  defmodule Categories do
+    alias Repo.Category
+
+    def list_categories do
+      Repo.all(Category)
+    end
+  end
+
   defmodule Titles do
     @moduledoc """
     The Titles context.
     """
-    alias Hyperion.Repo.Title
+    alias Repo.Title
     @doc """
     Returns the list of titles.
 
@@ -115,7 +123,7 @@ defmodule Hyperion.Videos do
 
 
   defmodule Thumbnails do
-    alias Hyperion.Repo.Thumbnail
+    alias Repo.Thumbnail
 
     def list_thumbnails do
       Repo.all(Thumbnail)

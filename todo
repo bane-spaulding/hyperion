@@ -1,5 +1,4 @@
 - create lever to set the image with existing image from database
-- create category get on google list video category handle
 
 - make TokenRefresher a ParentModule to set credential before children get initialized
 
