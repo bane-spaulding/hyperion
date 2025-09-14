@@ -131,14 +131,27 @@ defmodule Hyperion.Videos do
 
     def get_thumbnail!(id), do: Repo.get!(Thumbnail, id)
 
+    def get_by(attrs) do
+      list_thumbnails()
+      |> Enum.find(fn thumbnail ->
+        Map.keys(attrs)
+        |> Enum.all?(fn key ->
+          thumbnail
+          |> Map.get(key) === attrs[key]
+        end)
+      end)
+    end
+
+
     def insert_thumbnail(%Plug.Upload{} = upload, video_id, channel_id) do
       {:ok, binary_data} = File.read(upload.path)
 
       attrs = %{
+        file_id: upload.filename,
+        video_id: video_id,
+        channel_id: channel_id,
         data: binary_data,
         content_type: upload.content_type,
-        video_id: video_id,
-        channel_id: channel_id
       }
 
       %Thumbnail{}

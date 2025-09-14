@@ -3,10 +3,11 @@ defmodule Hyperion.Repo.Thumbnail do
   import Ecto.Changeset
 
   schema "thumbnails" do
+    field :file_id, :string
+    field :video_id, :string
+    field :channel_id, :string
     field :data, :binary
     field :content_type, :string
-    field :channel_id, :string
-    field :video_id, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -14,7 +15,7 @@ defmodule Hyperion.Repo.Thumbnail do
   @doc false
   def changeset(thumbnail, attrs) do
     thumbnail
-    |> cast(attrs, [:data, :content_type, :channel_id, :video_id])
-    |> validate_required([:data, :content_type, :channel_id, :video_id])
+    |> cast(attrs, [:file_id, :video_id, :channel_id, :data, :content_type])
+    |> validate_required([:video_id, :channel_id, :data, :content_type])
   end
 end

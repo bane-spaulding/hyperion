@@ -21,4 +21,22 @@ defmodule Hyperion.ExperimentsFixtures do
 
     experiment
   end
+
+  @doc """
+  Generate a experiment.
+  """
+  def experiment_fixture(attrs \\ %{}) do
+    {:ok, experiment} =
+      attrs
+      |> Enum.into(%{
+        channel_id: "some channel_id",
+        thumbnail_id: 42,
+        title: "some title",
+        video_id: "some video_id",
+        views: 42
+      })
+      |> Hyperion.Experiments.create_experiment()
+
+    experiment
+  end
 end

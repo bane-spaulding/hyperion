@@ -3,11 +3,11 @@ defmodule Hyperion.Repo.Migrations.CreateExperiments do
 
   def change do
     create table(:experiments) do
+      add :channel_id, :string
+      add :video_id, :string
       add :title, :string
-      add :thumbnail, :string
-      add :views, :integer
-      add :clicks, :integer
-      add :user_id, :integer
+      add :views, :integer, default:0
+      add :thumbnail_id, :integer
 
       timestamps(type: :utc_datetime)
     end

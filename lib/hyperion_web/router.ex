@@ -19,7 +19,13 @@ defmodule HyperionWeb.Router do
 
     get "/", PageController, :home
     get "/ping", PingController, :ping
-    resources "/experiments", ExperimentController
+    #resources "/experiments", ExperimentController
+    live "/experiments", ExperimentLive.Index, :index
+    live "/experiments/new", ExperimentLive.Form, :new
+    live "/experiments/:id", ExperimentLive.Show, :show
+    live "/experiments/:id/edit", ExperimentLive.Form, :edit
+
+    live "/thermostat", ThermostatLive
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

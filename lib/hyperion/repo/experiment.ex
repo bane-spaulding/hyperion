@@ -3,11 +3,11 @@ defmodule Hyperion.Repo.Experiment do
   import Ecto.Changeset
 
   schema "experiments" do
+    field :channel_id, :string
+    field :video_id, :string
     field :title, :string
-    field :thumbnail, :string
     field :views, :integer
-    field :clicks, :integer
-    field :user_id, :integer
+    field :thumbnail_id, :integer
 
     timestamps(type: :utc_datetime)
   end
@@ -15,7 +15,7 @@ defmodule Hyperion.Repo.Experiment do
   @doc false
   def changeset(experiment, attrs) do
     experiment
-    |> cast(attrs, [:title, :thumbnail, :views, :clicks, :user_id])
-    |> validate_required([:title, :thumbnail, :views, :clicks, :user_id])
+    |> cast(attrs, [:channel_id, :video_id, :title, :views, :thumbnail_id])
+    |> validate_required([:channel_id, :video_id, :title])
   end
 end

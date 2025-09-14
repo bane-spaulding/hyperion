@@ -81,3 +81,11 @@ if (process.env.NODE_ENV === "development") {
   })
 }
 
+import Uploaders from "./uploaders"
+
+let liveSocket = new LiveSocket("/live",
+   Socket, {
+     params: {_csrf_token: csrfToken},
+     uploaders: Uploaders
+  }
+)
