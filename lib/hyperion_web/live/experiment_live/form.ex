@@ -7,6 +7,8 @@ defmodule HyperionWeb.ExperimentLive.Form do
   alias Hyperion.Repo.Experiment
   alias Hyperion.Videos.Thumbnails
 
+  @thumbnail_max_size_in_bytes 2_000_000
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -20,6 +22,7 @@ defmodule HyperionWeb.ExperimentLive.Form do
         <.input field={@form[:channel_id]} type="text" label="Channel" />
         <.input field={@form[:video_id]} type="text" label="Video" />
         <.input field={@form[:title]} type="text" label="Title" />
+        <.input field={@form[:category_id]} type="number" label="CategoryId" />
         <div class="flex items-center gap-2" style="margin-top: 15px;margin-bottom: 20px;">
          <.live_file_input upload={@uploads.thumbnail}
                          class="block w-full text-sm text-gray-500 dark:text-gray-400
@@ -48,7 +51,7 @@ defmodule HyperionWeb.ExperimentLive.Form do
      socket
      |> assign(:return_to, return_to(params["return_to"]))
      |> apply_action(socket.assigns.live_action, params)
-     |> allow_upload(:thumbnail, accept: ~w(.jpg .jpeg .png), max_entries: 1)}
+     |> allow_upload(:thumbnail, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: @thumbnail_max_size_in_bytes)}
   end
 
   defp return_to("show"), do: "show"
@@ -78,31 +81,87 @@ defmodule HyperionWeb.ExperimentLive.Form do
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
-  def handle_event("save", %{"experiment" => experiment_params}, socket) do
-    case process_uploads(socket, experiment_params) do
-      params_with_file_id ->
-        save_experiment(socket, socket.assigns.live_action, params_with_file_id)
-      {:error, changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
+  @impl true
+  def handle_event("save", %{"experiment" => params}, socket) do
+    save_experiment(socket, :new, params)
   end
 
-  defp process_uploads(socket, experiment_params) do
+
+  defp save_experiment(socket, :new, params) do
+  thumbnail_attrs =
     case Enum.at(socket.assigns.uploads.thumbnail.entries, 0) do
       nil ->
-        {:ok, experiment_params}
-      upload_entry ->
-        Phoenix.LiveView.consume_uploaded_entry(socket, upload_entry, fn %{path: path} ->
+        nil
+
+      entry ->
+        Phoenix.LiveView.consume_uploaded_entry(socket, entry, fn %{path: path} ->
           upload = %Plug.Upload{
             path: path,
-            filename: upload_entry.client_name,
-            content_type: upload_entry.client_type
+            filename: entry.client_name,
+            content_type: entry.client_type
           }
 
-          case Thumbnails.insert_thumbnail(upload, experiment_params["video_id"], experiment_params["channel_id"]) do
+          {:ok,
+           %{
+             file_id: upload.filename,
+             data: File.read!(upload.path),
+             content_type: upload.content_type
+           }}
+        end)
+    end
+
+  Logger.info("!!!!!!!!!!#{inspect(thumbnail_attrs)}")
+  Logger.info("???#{inspect(params)}")
+
+  case Experiments.create_experiment_with_thumbnail(params, thumbnail_attrs) do
+    {:ok, %{experiment: experiment, thumbnail: _thumbnail}} ->
+      {:noreply,
+       socket
+       |> put_flash(:info, "Experiment created successfully")
+       |> push_navigate(to: return_path(socket.assigns.return_to, experiment))}
+
+    {:error, _step, %Ecto.Changeset{} = changeset, _changes_so_far} ->
+      {:noreply, assign(socket, form: to_form(changeset))}
+
+    {:error, step, reason, _changes_so_far} ->
+      Logger.error("Failed at step #{inspect(step)}: #{inspect(reason)}")
+      {:noreply, socket |> put_flash(:error, "Failed to save experiment")}
+  end
+end
+
+
+
+
+  #  def handle_event("save", %{"experiment" => experiment_params}, socket) do
+  #    case process_uploads(socket, experiment_params) do
+  #      params_with_file_id ->
+  #        save_experiment(socket, socket.assigns.live_action, params_with_file_id)
+  #      {:error, changeset} ->
+  #        {:noreply, assign(socket, form: to_form(changeset))}
+  #    end
+  #  end
+#
+  defp consume_uploads(socket, params, experiment_id) do
+    case Enum.at(socket.assigns.uploads.thumbnail.entries, 0) do
+      nil ->
+        {:ok, params}
+      entry ->
+        Phoenix.LiveView.consume_uploaded_entry(socket, entry, fn %{path: path} ->
+          upload = %Plug.Upload{
+            path: path,
+            filename: entry.client_name,
+            content_type: entry.client_type
+          }
+
+          case Thumbnails.insert_thumbnail(
+            upload,
+            params["video_id"],
+            params["channel_id"],
+            experiment_id
+          ) do
             {:ok, thumbnail} ->
               Logger.debug("Successfully uploaded #{upload.filename} to DB")
-              {:ok, Map.put(experiment_params, "thumbnail_id", thumbnail.id)}
+              {:ok, Map.put(params, "thumbnail_id", thumbnail.id)}
             {:error, changeset} ->
               Logger.error("Failed to save #{upload.filename} to DB: #{inspect(changeset)}")
               {:error, changeset}

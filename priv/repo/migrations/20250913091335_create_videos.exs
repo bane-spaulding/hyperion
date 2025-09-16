@@ -3,10 +3,10 @@ defmodule Hyperion.Repo.Migrations.CreateVideos do
 
   def change do
     create table(:videos) do
+      add :video_id, :string, null: false
       add :etag, :string
-      add :video_id, :string
       add :kind, :string
-      add :view_count, :integer
+      add :view_count, :integer, null: false
       add :like_count, :integer
       add :dislike_count, :integer
       add :favorite_count, :integer

@@ -2,6 +2,8 @@
 // to get started and then uncomment the line below.
 import "./video_view_socket.js"
 
+@import "tailwindcss";
+
 // You can include dependencies in two ways.
 //
 // The simplest option is to put them in assets/vendor and

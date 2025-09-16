@@ -19,6 +19,7 @@ defmodule HyperionWeb.Router do
 
     get "/", PageController, :home
     get "/ping", PingController, :ping
+    get "/thumbnails/:id", ThumbnailController, :show
     #resources "/experiments", ExperimentController
     live "/experiments", ExperimentLive.Index, :index
     live "/experiments/new", ExperimentLive.Form, :new

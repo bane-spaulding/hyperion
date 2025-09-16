@@ -9,9 +9,8 @@ defmodule Hyperion.VideoEditor do
 
   @api_title_url "https://www.googleapis.com/youtube/v3/videos"
   @title_max_length 100
-  # @api_thumbnail_url "https://www.googleapis.com/upload/youtube/v3/thumbnails/set"
-  # @thumbnail_accepted_types ["image/jpeg","image/png","application/octet-stream"]
-  # @thumbnail_max_bytes_size 2000000
+  @api_thumbnail_url "https://www.googleapis.com/upload/youtube/v3/thumbnails/set"
+  @thumbnail_accepted_types ["image/jpeg","image/png","application/octet-stream"]
 
   def start_link() do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -90,6 +89,50 @@ defmodule Hyperion.VideoEditor do
 
   defp handle_api_response(resp, video_id, _category_id, _title) do
     Logger.error("Failed to update title for video: #{video_id}. Response: #{inspect(resp)}")
+    {:error, :api_error}
+  end
+
+  def set_thumbnail(video_id, thumbnail) do
+    GenServer.call(__MODULE__, {:set_thumbnail, video_id, thumbnail})
+  end
+
+  @impl true
+  def handle_cast({:set_thumbnail, video_id, thumbnail}, state) do
+    Task.start_link(fn -> update_video_thumbnail(video_id, thumbnail) end)
+    {:noreply, state}
+  end
+
+  defp update_video_thumbnail(video_id, thumbnail) do
+    with %Secret{access_token: access_token} <- Repo.get(Secret, 1),
+         headers = [
+           {"Authorization", "Bearer #{access_token}"},
+           {"Content-Type", "image/jpeg"} # Assuming the thumbnail is a JPEG
+         ],
+         {:ok, resp} <-
+           Req.post(
+             @api_thumbnail_url,
+             headers: headers,
+             params: %{videoId: video_id},
+             body: thumbnail
+           ) do
+      handle_api_response(resp)
+    else
+      nil ->
+        Logger.error("Access token not found for thumbnail update.")
+        {:error, :token_not_found}
+      _ ->
+        Logger.error("Unknown error updating thumbnail.")
+        {:error, :unknown_error}
+    end
+  end
+
+  defp handle_api_response(%{status: 200}) do
+    Logger.info("Successfully updated thumbnail.")
+    {:ok, :thumbnail_updated}
+  end
+
+  defp handle_api_response(resp) do
+    Logger.error("Failed to update thumbnail. Response: #{inspect(resp)}")
     {:error, :api_error}
   end
 

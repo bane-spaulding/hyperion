@@ -15,7 +15,6 @@ defmodule Hyperion.Repo.Video do
              :inserted_at,
              :updated_at
            ]}
-
   schema "videos" do
     field :etag, :string
     field :video_id, :string
@@ -31,26 +30,20 @@ defmodule Hyperion.Repo.Video do
 
   @doc false
   def changeset(video, attrs) do
+    shared = [
+      :etag,
+      :video_id,
+      :kind,
+      :view_count,
+      :like_count,
+      :dislike_count,
+      :favorite_count,
+      :comment_count,
+      :experiment_id
+    ]
+
     video
-    |> cast(attrs, [
-      :etag,
-      :video_id,
-      :kind,
-      :view_count,
-      :like_count,
-      :dislike_count,
-      :favorite_count,
-      :comment_count
-    ])
-    |> validate_required([
-      :etag,
-      :video_id,
-      :kind,
-      :view_count,
-      :like_count,
-      :dislike_count,
-      :favorite_count,
-      :comment_count
-    ])
+    |> cast(attrs, shared)
+    |> validate_required(shared)
   end
 end

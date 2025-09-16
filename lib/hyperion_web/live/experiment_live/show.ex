@@ -2,6 +2,7 @@ defmodule HyperionWeb.ExperimentLive.Show do
   use HyperionWeb, :live_view
 
   alias Hyperion.Experiments
+  alias Hyperion.Videos.Thumbnails
 
   @impl true
   def render(assigns) do
@@ -24,9 +25,10 @@ defmodule HyperionWeb.ExperimentLive.Show do
         <:item title="Channel">{@experiment.channel_id}</:item>
         <:item title="Video">{@experiment.video_id}</:item>
         <:item title="Title">{@experiment.title}</:item>
-        <:item title="Views">{@experiment.views}</:item>
-        <:item title="Thumbnail">{@experiment.thumbnail_id}</:item>
+        <:item title="Thumbnail">{@experiment.thumbnail.file_id}</:item>
+
       </.list>
+      <img src={~p"/thumbnails/#{@experiment.thumbnail.id}"} class="w-full object-cover rounded-xl shadow-xl border-4 border-white" />
     </Layouts.app>
     """
   end

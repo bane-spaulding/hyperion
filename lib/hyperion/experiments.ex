@@ -4,8 +4,9 @@ defmodule Hyperion.Experiments do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Multi
   alias Hyperion.Repo
-  alias Hyperion.Repo.Experiment
+  alias Hyperion.Repo.{Experiment, Thumbnail}
 
   @doc """
   Returns the list of experiments.
@@ -17,7 +18,9 @@ defmodule Hyperion.Experiments do
 
   """
   def list_experiments do
-    Repo.all(Experiment)
+    Experiment
+    |> Repo.all()
+    |> Repo.preload(:thumbnail)
   end
 
   @doc """
@@ -34,7 +37,11 @@ defmodule Hyperion.Experiments do
       ** (Ecto.NoResultsError)
 
   """
-  def get_experiment!(id), do: Repo.get!(Experiment, id)
+  def get_experiment!(id) do
+    Experiment
+    |> Repo.get!(id)
+    |> Repo.preload(:thumbnail)
+  end
 
   @doc """
   Creates a experiment.
@@ -55,6 +62,20 @@ defmodule Hyperion.Experiments do
   end
 
   @doc """
+    Creates an experiment and its thumbnail in one atomic transaction.
+    Returns {:ok, %{experiment: experiment, thumbnail: thumbnail}}.
+  """
+  def create_experiment_with_thumbnail(exp_attrs, thumb_attrs) do
+    Multi.new()
+      |> Multi.insert(:experiment, Experiment.changeset(%Experiment{}, exp_attrs))
+      |> Multi.insert(:thumbnail, fn %{experiment: exp} -> exp
+        |> Ecto.build_assoc(:thumbnail, thumb_attrs)
+        |> Thumbnail.changeset(%{})
+    end)
+    |> Repo.transaction()
+  end
+
+  @doc """
   Updates a experiment.
 
   ## Examples
@@ -67,7 +88,7 @@ defmodule Hyperion.Experiments do
 
   """
   def update_experiment(%Experiment{} = experiment, attrs) do
-    experiment
+     experiment
     |> Experiment.changeset(attrs)
     |> Repo.update()
   end
