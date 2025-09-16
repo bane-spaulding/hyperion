@@ -76,6 +76,16 @@ defmodule Hyperion.Experiments do
   end
 
   @doc """
+  Updates an experiment and its thumbnail in one atomic transaction.
+  Returns {:ok, %{experiment: experiment, thumbnail: thumbnail}}.
+  """
+    def update_experiment_with_thumbnail(%Experiment{thumbnail: thumbnail} = experiment, exp_attrs, thumb_attrs) do
+  Multi.new()
+  |> Multi.update(:experiment, Experiment.changeset(experiment, exp_attrs))
+  |> Multi.update(:thumbnail, Thumbnail.changeset(thumbnail, thumb_attrs))
+  |> Repo.transaction()
+end
+  @doc """
   Updates a experiment.
 
   ## Examples

@@ -8,6 +8,8 @@ defmodule HyperionWeb.ExperimentLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
+
+
       <.header>
         Experiment {@experiment.id}
         <:subtitle>This is a experiment record from your database.</:subtitle>
@@ -21,14 +23,27 @@ defmodule HyperionWeb.ExperimentLive.Show do
         </:actions>
       </.header>
 
-      <.list>
-        <:item title="Channel">{@experiment.channel_id}</:item>
-        <:item title="Video">{@experiment.video_id}</:item>
-        <:item title="Title">{@experiment.title}</:item>
-        <:item title="Thumbnail">{@experiment.thumbnail.file_id}</:item>
-
-      </.list>
-      <img src={~p"/thumbnails/#{@experiment.thumbnail.id}"} class="w-full object-cover rounded-xl shadow-xl border-4 border-white" />
+      <div class="flex gap-4 items-start">
+  <div class="flex-shrink-0">
+    <img src={~p"/thumbnails/#{@experiment.thumbnail.id}"} class="w-140 object-cover rounded-xl shadow-xl border-4 border-white" />
+  </div>
+  <div class="min-w-0">
+    <.list>
+      <:item title="Title">{@experiment.title}</:item>
+      <:item title="Thumbnail">{@experiment.thumbnail.file_id}</:item>
+      <:item title="Video">
+        <a href={"https://www.youtube.com/watch?v=#{@experiment.video_id}"} target="_blank" class="text-blue-600 hover:text-blue-800">
+          {@experiment.video_id}
+        </a>
+      </:item>
+      <:item title="Channel">
+        <a href={"https://www.youtube.com/channel/#{@experiment.channel_id}"} target="_blank" class="text-blue-600 hover:text-blue-800">
+          {@experiment.channel_id}
+        </a>
+      </:item>
+    </.list>
+  </div>
+</div>
     </Layouts.app>
     """
   end

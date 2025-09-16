@@ -1,7 +1,7 @@
-- rename videos into video_view_events
-- create table that will capture max views in events?
-
-- create lever to set the image with existing image from database
+- create a button to manually kick-off the experiment, it launches:
+  - ViewMonitor
+  - Sets title
+  - Sets thumbnail
 
 - make TokenRefresher a ParentModule to set credential before children get initialized
 

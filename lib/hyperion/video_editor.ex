@@ -92,22 +92,23 @@ defmodule Hyperion.VideoEditor do
     {:error, :api_error}
   end
 
-  def set_thumbnail(video_id, thumbnail) do
-    GenServer.call(__MODULE__, {:set_thumbnail, video_id, thumbnail})
+  def set_thumbnail(video_id, thumbnail_id) do
+    GenServer.cast(__MODULE__, {:set_thumbnail, video_id, thumbnail_id})
   end
 
   @impl true
-  def handle_cast({:set_thumbnail, video_id, thumbnail}, state) do
-    Task.start_link(fn -> update_video_thumbnail(video_id, thumbnail) end)
+  def handle_cast({:set_thumbnail, video_id, thumbnail_id}, state) do
+    Task.start_link(fn -> update_video_thumbnail(video_id, thumbnail_id) end)
     {:noreply, state}
   end
 
-  defp update_video_thumbnail(video_id, thumbnail) do
-    with %Secret{access_token: access_token} <- Repo.get(Secret, 1),
+  defp update_video_thumbnail(video_id, thumbnail_id) do
+    with%Secret{access_token: access_token} <- Repo.get(Secret, 1),
          headers = [
            {"Authorization", "Bearer #{access_token}"},
            {"Content-Type", "image/jpeg"} # Assuming the thumbnail is a JPEG
          ],
+         %Hyperion.Repo.Thumbnail{data: thumbnail, content_type: content_type} <- Hyperion.Videos.Thumbnails.get_thumbnail!(thumbnail_id),
          {:ok, resp} <-
            Req.post(
              @api_thumbnail_url,
