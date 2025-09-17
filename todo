@@ -2,6 +2,7 @@
   - ViewMonitor
   - Sets title
   - Sets thumbnail
+  (Optional stops )
 
 - make TokenRefresher a ParentModule to set credential before children get initialized
 

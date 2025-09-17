@@ -6,6 +6,7 @@ defmodule Hyperion.ViewTracker do
 
   alias Hyperion.Repo
   alias Hyperion.Repo.{Secret, Video}
+  alias Hyperion.Videos
 
   @api_url "https://youtube.googleapis.com/youtube/v3/videos"
   # @request_interval :timer.seconds(15)
@@ -19,10 +20,9 @@ defmodule Hyperion.ViewTracker do
 
   # GenServer callbacks
   @impl true
-  def init(video_id) do
+  def init(video_ids) do
     state = %{
-      video_id: video_id,
-      videos: []
+      video_ids: video_ids
     }
 
     Kernel.send(self(), :request)
@@ -30,14 +30,17 @@ defmodule Hyperion.ViewTracker do
   end
 
   @impl true
-  def handle_info(:request, %{video_id: video_id, videos: _} = state) do
-    Logger.info("YouTube Worker is getting views for: #{inspect(video_id)}")
+  def handle_info(:request, %{video_ids: video_id_string} = state) do
+    Logger.info("YouTube Worker is getting views for: #{inspect(video_id_string)}")
+
+    video_ids = String.split(video_id_string, ",")
+    last_view_counts = Videos.get_last_view_counts(video_ids)
 
     case Repo.get(Secret, 1) do
       %Secret{access_token: access_token} ->
         params = %{
           "part" => "statistics",
-          "id" => video_id
+          "id" => video_id_string
         }
 
         with {:ok, resp} <-
@@ -47,26 +50,24 @@ defmodule Hyperion.ViewTracker do
                |> Req.get() do
           case resp.status do
             200 ->
-              Logger.info("Successfully fetched views for #{video_id}.")
+              Logger.info("Successfully fetched views for #{video_ids}.")
               Logger.debug(resp.body)
 
               %{"items" => items} = resp.body
 
-              videos =
-                Enum.map(items, fn map ->
-                  convert_to_video(map)
-                end)
+              videos = process_videos(items, last_view_counts)
 
               Task.start(fn -> save_videos(videos) end)
               Phoenix.PubSub.broadcast(Hyperion.PubSub, @topic, {:videos, videos})
 
               Process.send_after(self(), :request, @request_interval)
-              {:noreply, %{state | videos: videos}}
+              {:noreply, state}
 
             404 ->
-              {:stop, :not_found, video_id}
+              {:stop, :not_found, video_id_string}
 
             status ->
+              Logger.debug(resp.body)
               {:stop, :unexpected_status, status}
           end
         else
@@ -75,8 +76,24 @@ defmodule Hyperion.ViewTracker do
         end
 
       nil ->
-        {:stop, "No existing access_token found, impossible condition, halting system.", video_id}
+        {:stop, "No existing access_token found, impossible condition, halting system.", video_ids}
     end
+  end
+
+    defp process_videos(items, last_view_counts) do
+    Enum.map(items, fn map ->
+      %Video{
+        etag: map["etag"],
+        video_id: map["id"],
+        kind: map["kind"],
+        view_count: String.to_integer(map["statistics"]["viewCount"]),
+        like_count: String.to_integer(map["statistics"]["likeCount"]),
+        dislike_count: String.to_integer(Map.get(map["statistics"], "dislikeCount", "0")),
+        favorite_count: String.to_integer(map["statistics"]["favoriteCount"]),
+        comment_count: String.to_integer(map["statistics"]["commentCount"]),
+        view_change: String.to_integer(map["statistics"]["viewCount"]) - Map.get(last_view_counts, map["id"], 0)
+      }
+    end)
   end
 
   defp save_videos(videos) do
@@ -88,7 +105,6 @@ defmodule Hyperion.ViewTracker do
       Enum.map(videos, fn video ->
         video
         |> Map.from_struct()
-        # remove Ecto metadata and primary key
         |> Map.drop([:__meta__, :id])
         |> Map.put(:inserted_at, inserted_at)
         |> Map.put(:updated_at, inserted_at)
@@ -101,31 +117,5 @@ defmodule Hyperion.ViewTracker do
       {count, _} ->
         Logger.info("Successfully inserted #{count} videos.")
     end
-  end
-
-  defp convert_to_video(map) do
-    %{
-      "etag" => etag,
-      "id" => id,
-      "kind" => kind,
-      "statistics" => %{
-        "commentCount" => comment_count,
-        "dislikeCount" => dislike_count,
-        "favoriteCount" => favorite_count,
-        "likeCount" => like_count,
-        "viewCount" => view_count
-      }
-    } = map
-
-    %Video{
-      etag: etag,
-      video_id: id,
-      kind: kind,
-      view_count: String.to_integer(view_count),
-      like_count: String.to_integer(like_count),
-      dislike_count: String.to_integer(dislike_count),
-      favorite_count: String.to_integer(favorite_count),
-      comment_count: String.to_integer(comment_count)
-    }
   end
 end

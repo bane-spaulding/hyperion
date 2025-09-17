@@ -2,6 +2,24 @@ import Ecto.Query, warn: false
 alias Hyperion.Repo
 
 defmodule Hyperion.Videos do
+  alias Repo.Video
+
+  def get_last_view_counts(video_ids) do
+    video_ids
+    |> Enum.map(fn video_id ->
+      case Repo.one(from v in Video,
+        where: v.video_id == ^video_id,
+        order_by: [desc: v.inserted_at],
+        limit: 1,
+        select: v.view_count
+      ) do
+        nil -> {video_id, 0}
+        count -> {video_id, count}
+      end
+    end)
+    |> Map.new()
+  end
+
   defmodule Categories do
     alias Repo.Category
 

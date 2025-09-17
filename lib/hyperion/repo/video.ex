@@ -8,6 +8,7 @@ defmodule Hyperion.Repo.Video do
              :etag,
              :kind,
              :view_count,
+             :view_change,
              :like_count,
              :dislike_count,
              :favorite_count,
@@ -20,6 +21,7 @@ defmodule Hyperion.Repo.Video do
     field :video_id, :string
     field :kind, :string
     field :view_count, :integer
+    field :view_change, :integer
     field :like_count, :integer
     field :dislike_count, :integer
     field :favorite_count, :integer
@@ -35,6 +37,7 @@ defmodule Hyperion.Repo.Video do
       :video_id,
       :kind,
       :view_count,
+      :view_change,
       :like_count,
       :dislike_count,
       :favorite_count,

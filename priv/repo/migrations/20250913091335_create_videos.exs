@@ -7,6 +7,7 @@ defmodule Hyperion.Repo.Migrations.CreateVideos do
       add :etag, :string
       add :kind, :string
       add :view_count, :integer, null: false
+      add :view_change, :integer, null: false
       add :like_count, :integer
       add :dislike_count, :integer
       add :favorite_count, :integer
