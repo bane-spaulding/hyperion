@@ -4,6 +4,17 @@
   - Sets thumbnail
   (Optional stops )
 
+- create is_active slider
+
+- create campaign page that has (:new)
+  - list dropdown of videos
+  - category labels in human lang
+  - schedule window [how often switch]
+  - length of the experiment
+  - (*optional) convergence speed, how quickly prefer the leader
+- basic index -> generic
+- form (dashboard) -> displays dashboard for all and leaderboard so far
+
 - make TokenRefresher a ParentModule to set credential before children get initialized
 
 (optional)

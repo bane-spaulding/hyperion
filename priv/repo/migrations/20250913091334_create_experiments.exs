@@ -9,6 +9,9 @@ defmodule Hyperion.Repo.Migrations.CreateExperiments do
       add :title, :string, null: false
       add :views, :integer, default: 0
       add :category_id, :integer, null: false
+      add :is_active, :boolean, default: false
+
+      add :campaign_id, references(:campaigns, type: :binary_id, on_delete: :delete_all)
 
       timestamps(type: :utc_datetime)
     end

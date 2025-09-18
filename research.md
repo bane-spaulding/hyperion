@@ -34,6 +34,20 @@ experiment = rolling out a changed banner
 
 experiment -> video -> channel -> user
 
+campaign attr:
+campaign_start_ts
+campaign_end_ts
+experiment_start_ts
+experiment_end_ts
+experiment_id
+
+'abcde'
+
+
+|---> ---->|
+begin     end
+
+
 system:
 
         ____(p eps)___

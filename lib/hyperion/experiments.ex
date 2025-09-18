@@ -6,7 +6,7 @@ defmodule Hyperion.Experiments do
   import Ecto.Query, warn: false
   alias Ecto.Multi
   alias Hyperion.Repo
-  alias Hyperion.Repo.{Experiment, Thumbnail}
+  alias Hyperion.Repo.{Experiment, ExperimentRun, Thumbnail}
 
   @doc """
   Returns the list of experiments.
@@ -21,6 +21,15 @@ defmodule Hyperion.Experiments do
     Experiment
     |> Repo.all()
     |> Repo.preload(:thumbnail)
+  end
+
+  @doc """
+  Returns a list of all experiments that are currently active.
+  """
+  def list_active_experiments do
+    Experiment
+    |> where(is_active: true)
+    |> Repo.all()
   end
 
   @doc """
@@ -43,10 +52,33 @@ defmodule Hyperion.Experiments do
     |> Repo.preload(:thumbnail)
   end
 
+  def get_experiment(id), do: Repo.get!(Experiment, id)
+
+  @doc """
+  Returns an active experiment for a given video ID.
+  """
+  def get_active_experiment_by_video_id(video_id) do
+    from(e in Experiment,
+      where: e.is_active == true and e.video_id == ^video_id
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Returns the single active experiment and preloads its associated run.
+  """
+  def get_active_experiment_with_run do
+    Experiment
+    |> where(is_active: true)
+    |> Repo.preload(:experiment_run)
+    |> Repo.one()
+  end
+
   @doc """
   Creates a experiment.
 
-  ## Examples
+
+  #i Examples
 
       iex> create_experiment(%{field: value})
       {:ok, %Experiment{}}

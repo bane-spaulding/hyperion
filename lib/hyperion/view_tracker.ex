@@ -13,12 +13,10 @@ defmodule Hyperion.ViewTracker do
   @request_interval :timer.minutes(1)
   @topic "views_1m"
 
-  # Client-facing API functions
   def start_link(initial_state) do
     GenServer.start_link(__MODULE__, initial_state, name: __MODULE__)
   end
 
-  # GenServer callbacks
   @impl true
   def init(video_ids) do
     state = %{
