@@ -9,7 +9,8 @@ defmodule Hyperion.Repo.Migrations.CreateStrategies do
       add :status, :string, null: false
       add :start_ts, :utc_datetime, null: false
       add :end_ts, :utc_datetime, null: false
-      add :schedule, :string
+      add :schedule, :string, null: false
+      add :winner_experiment_id, :integer
 
       timestamps(type: :utc_datetime)
     end
