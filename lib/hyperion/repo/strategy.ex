@@ -1,11 +1,11 @@
-defmodule Hyperion.Repo.Campaign do
+defmodule Hyperion.Repo.Strategy do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Hyperion.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  schema "campaigns" do
+  schema "strategies" do
     field :name, :string
     field :description, :string
     field :status, Ecto.Enum, values: [:planned, :running, :completed, :archived]
@@ -20,8 +20,8 @@ defmodule Hyperion.Repo.Campaign do
   end
 
   @doc false
-  def changeset(campaign, attrs) do
-    campaign
+  def changeset(strategy, attrs) do
+    strategy
     |> cast(attrs, [:name, :description, :status, :start_ts, :end_ts, :schedule, :winner_experiment_id])
     |> validate_required([:name, :status, :start_ts, :end_ts])
   end

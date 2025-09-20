@@ -2,7 +2,7 @@ defmodule Hyperion.Repo.Experiment do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Hyperion.Repo
+  alias Hyperion.Repo.{ExperimentRun, Strategy, Thumbnail}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -13,9 +13,9 @@ defmodule Hyperion.Repo.Experiment do
     field :category_id, :integer
     field :is_active, :boolean
 
-    belongs_to :campaign, Repo.Campaign, type: :binary_id
-    has_many :experiment_run, Repo.ExperimentRun, on_delete: :delete_all
-    has_one :thumbnail, Repo.Thumbnail, on_delete: :delete_all
+    belongs_to :strategy, Strategy, type: :binary_id
+    has_many :experiment_run,ExperimentRun, on_delete: :delete_all
+    has_one :thumbnail, Thumbnail, on_delete: :delete_all
 
     timestamps(type: :utc_datetime)
   end

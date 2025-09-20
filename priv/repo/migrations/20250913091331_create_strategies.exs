@@ -1,4 +1,4 @@
-defmodule Hyperion.Repo.Migrations.CreateCampaigns do
+defmodule Hyperion.Repo.Migrations.CreateStrategies do
   use Ecto.Migration
 
   def change do

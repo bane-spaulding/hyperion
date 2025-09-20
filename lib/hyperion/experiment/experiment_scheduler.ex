@@ -37,13 +37,13 @@ defmodule Hyperion.Experiments.ExperimentScheduler do
 
     active_experiments = Experiments.list_active_experiments()
 
-    experiments_by_campaign =
+    experiments_by_strategy =
       Enum.group_by(active_experiments, fn exp ->
-        exp.campaign_id
+        exp.strategy_id
       end)
 
 
-    Enum.each(experiments_by_campaign, fn {_campaign_id, experiments} ->
+    Enum.each(experiments_by_strategy, fn {_strategy_id, experiments} ->
       Enum.each(experiments, fn exp ->
         if exp.experiment_run do
           start_ts = DateTime.utc_now()
