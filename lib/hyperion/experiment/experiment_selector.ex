@@ -1,4 +1,4 @@
- defmodule Hyperion.Experiment.ExperimentSelector do
+ defmodule Hyperion.Experiments.ExperimentSelector do
   @moduledoc """
   A module for selecting experiments based on different distribution types.
   """

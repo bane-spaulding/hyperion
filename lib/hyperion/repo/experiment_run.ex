@@ -11,7 +11,7 @@ defmodule Hyperion.Repo.ExperimentRun do
     field :status, Ecto.Enum, values: [:scheduled, :running, :completed, :aborted]
     field :start_ts, :utc_datetime
     field :end_ts, :utc_datetime
-    field :schedule_window, :string
+    field :schedule_window, :duration
     field :allocation_strategy, :map
     field :view_count, :integer
 
@@ -24,7 +24,6 @@ defmodule Hyperion.Repo.ExperimentRun do
   def changeset(experiment_run, attrs) do
     experiment_run
     |> cast(attrs, [
-      :campaign_id,
       :experiment_id,
       :run_number,
       :status,
@@ -34,6 +33,8 @@ defmodule Hyperion.Repo.ExperimentRun do
       :allocation_strategy,
       :view_count
     ])
-    |> validate_required([:campaign_id, :experiment_id, :run_number, :status, :start_ts, :end_ts])
+    |> validate_required([:experiment_id, :run_number, :status, :start_ts, :end_ts])
+    |> unique_constraint(:run_number, name: :experiment_runs_experiment_run_number_index)
+
   end
 end

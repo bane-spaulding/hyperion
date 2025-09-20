@@ -26,10 +26,12 @@ defmodule Hyperion.Experiments do
   @doc """
   Returns a list of all experiments that are currently active.
   """
-  def list_active_experiments do
-    Experiment
-    |> where(is_active: true)
-    |> Repo.all()
+  def list_active_experiments() do
+    Repo.all(
+      from e in Experiment,
+      where: e.is_active == true,
+      preload: [:experiment_run]
+    )
   end
 
   @doc """
@@ -163,4 +165,6 @@ end
   def change_experiment(%Experiment{} = experiment, attrs \\ %{}) do
     Experiment.changeset(experiment, attrs)
   end
+
+  
 end

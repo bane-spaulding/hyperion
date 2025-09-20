@@ -14,6 +14,15 @@ defmodule HyperionWeb.ExperimentLive.Show do
         Experiment {@experiment.id}
         <:subtitle>This is a experiment record from your database.</:subtitle>
         <:actions>
+    <label class="switch">
+              <input
+  type="checkbox"
+  id="mySlider"
+  phx-click="toggle-active"
+  checked={@experiment.is_active}
+/>
+  <span class="slider round"></span>
+</label>
           <.button navigate={~p"/experiments"}>
             <.icon name="hero-arrow-left" />
           </.button>
@@ -54,5 +63,25 @@ defmodule HyperionWeb.ExperimentLive.Show do
      socket
      |> assign(:page_title, "Show Experiment")
      |> assign(:experiment, Experiments.get_experiment!(id))}
+  end
+
+  @impl true
+  def handle_event("toggle-active", _params, socket) do
+    experiment = socket.assigns.experiment
+    new_is_active = not experiment.is_active
+
+    # Update the is_active status in the database
+    case Experiments.update_experiment(experiment, %{is_active: new_is_active}) do
+      {:ok, updated_experiment} ->
+        # Update the LiveView state with the new experiment record
+        {:noreply, assign(socket, :experiment, updated_experiment)}
+
+      {:error, changeset} ->
+        # Handle the error, maybe show a flash message
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to update experiment status.")
+         |> assign(:experiment, experiment)}
+    end
   end
 end

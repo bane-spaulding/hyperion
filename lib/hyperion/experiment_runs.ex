@@ -6,6 +6,7 @@ defmodule Hyperion.ExperimentRuns do
   import Ecto.Query, warn: false
   alias Hyperion.Repo
   alias Hyperion.Repo.ExperimentRun
+  alias Hyperion.Repo.ExperimentRun
 
   @doc """
   Returns the list of experiment runs.
@@ -35,6 +36,28 @@ defmodule Hyperion.ExperimentRuns do
 
   """
   def get_experiment_run!(id), do: Repo.get!(ExperimentRun, id)
+
+  def create_experiment_run_atomically(experiment_id, run_attrs) do
+        Ecto.Multi.new()
+    |> Ecto.Multi.run(:run_number_and_insert, fn repo, _changes ->
+      next_run_number = repo.one(
+        from er in ExperimentRun,
+          where: er.experiment_id == ^experiment_id,
+          select: max(er.run_number)
+      ) || 0
+      |> Kernel.+(1)
+
+      attrs = Map.merge(run_attrs, %{
+        run_number: next_run_number,
+        experiment_id: experiment_id
+      })
+
+      %ExperimentRun{}
+      |> ExperimentRun.changeset(attrs)
+      |> Repo.insert()
+    end)
+    |> Repo.transaction()
+  end
 
   @doc """
   Creates an experiment run.

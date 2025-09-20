@@ -10,10 +10,11 @@ defmodule Hyperion.Application do
     children = [
       HyperionWeb.Telemetry,
       Hyperion.Repo,
-      #      Hyperion.TokenRefresher,
+      Hyperion.TokenRefresher,
       #{Hyperion.ViewTracker, "Xer-7tPXpUg,DCAyxxIaY04"},
       {DNSCluster, query: Application.get_env(:hyperion, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Hyperion.PubSub},
+      Hyperion.Experiments.ExperimentScheduler,
       # Start a worker by calling: Hyperion.Worker.start_link(arg)
       # {Hyperion.Worker, arg},
       # Start to serve requests, typically the last entry
