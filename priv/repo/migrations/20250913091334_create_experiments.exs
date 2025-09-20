@@ -11,7 +11,7 @@ defmodule Hyperion.Repo.Migrations.CreateExperiments do
       add :category_id, :integer, null: false
       add :is_active, :boolean, default: false
 
-      add :campaign_id, references(:campaigns, type: :binary_id, on_delete: :delete_all)
+      add :strategy_id, references(:strategies, type: :binary_id, on_delete: :delete_all)
 
       timestamps(type: :utc_datetime)
     end

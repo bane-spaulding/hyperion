@@ -2,7 +2,7 @@ defmodule Hyperion.Repo.Migrations.CreateStrategies do
   use Ecto.Migration
 
   def change do
-    create table(:campaigns, primary_key: false) do
+    create table(:strategies, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string, null: false
       add :description, :text
@@ -14,6 +14,6 @@ defmodule Hyperion.Repo.Migrations.CreateStrategies do
       timestamps(type: :utc_datetime)
     end
 
-    create index(:campaigns, [:status])
+    create index(:strategies, [:status])
   end
 end
